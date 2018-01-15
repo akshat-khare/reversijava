@@ -35,173 +35,199 @@ public class ui{
     public static boolean checkValidV2(String[][] obj, int x, int y, int player){
         String sameone = player+"";
         String otherone = (3- (player))+"";
-        boolean row = False;
-        boolean column =False;
-        boolean diagonalrightslash = False;
+        boolean row = false;
+        boolean column =false;
+        boolean diagonalrightslash = false;
         
         if(obj[x][y]=="1"|obj[x][y]=="2"){
-            return False;
+            return false;
         }
-        //check in the row
+        //check in the column
         if(x==0){
-            //check right
+            //check down
             if(obj[1][y]!=otherone){
-                row=False;
+                row=false;
             }else{
                 for(int i=2;i<8;i++){
                     if(obj[i][y]==sameone){
-                        return True;
+                        return true;
                     }else if(obj[i][y]=="_"){
-                        row = False;
+                        row = false;
                         break;
                     }
                 }
-                row=False;
+                row=false;
             }
         }else if(x==7){
-            //check left
+            //check up
             if(obj[6][y]!=otherone){
-                row=False;
+                row=false;
             }else{
-                for(int i=6;i>=0;i--){
+                for(int i=5;i>=0;i--){
                     if(obj[i][y]==sameone){
-                        return True;
+                        return true;
                     }else if(obj[i][y]=="_"){
-                        row = False;
+                        row = false;
                         break;
                     }
                 }
-                row=False;
+                row=false;
             }
         }else{
             //checkboth
             if(obj[x+1][y]!=otherone  && obj[x-1][y]!=otherone){
-                row = False;
+                row = false;
             }else if(obj[x+1][y]!=otherone){
-                //checkonly left
+                //checkonly up
                 for(int i=x-2;i>=0;i--){
+                    if(i==-1){
+                        break;
+                    }
                     if(obj[i][y]==sameone){
-                        return True;
+                        return true;
                     }else if(obj[i][y]=="_"){
-                        row = False;
+                        row = false;
                         break;
                     }
                 }
-                row= False;
+                row= false;
             }else if(obj[x-1][y]!=otherone){
-                //checkonly right
+                //checkonly down
                 for(int i=x+2;i<8;i++){
+                    if(i==8){
+                        break;
+                    }
                     if(obj[i][y]==sameone){
-                        return True;
+                        return true;
                     }else if(obj[i][y]=="_"){
-                        row = False;
+                        row = false;
                         break;
                     }
                 }
-                row=False;
+                row=false;
             }else{
                 //checkboth
                 for(int i=x-2;i>=0;i--){
+                    if(i==-1){
+                        break;
+                    }
                     if(obj[i][y]==sameone){
-                        return True;
+                        return true;
                     }else if(obj[i][y]=="_"){
-                        row = False;
+                        row = false;
                         break;
                     }
                 }
                 for(int i=x+2;i<8;i++){
+                    if(i==8){
+                        break;
+                    }
                     if(obj[i][y]==sameone){
-                        return True;
+                        return true;
                     }else if(obj[i][y]=="_"){
-                        row = False;
+                        row = false;
                         break;
                     }
                 }
-                row=False;
+                row=false;
             }
         }
-        //checkcolumn
+        //checkrow
         if(y==0){
-            //check down
+            //check right
             if(obj[x][1]!=otherone){
-                column=False;
+                column=false;
             }else{
                 for(int i=2;i<8;i++){
+
                     if(obj[x][i]==sameone){
-                        return True;
+                        return true;
                     }else if(obj[x][i]=="_"){
-                        column = False;
+                        column = false;
                         break;
                     }
                 }
-                column=False;
+                column=false;
             }
         }else if(x==7){
-            //check up
+            //check left
             if(obj[x][6]!=otherone){
-                column=False;
+                column=false;
             }else{
-                for(int i=6;i>=0;i--){
+                for(int i=5;i>=0;i--){
+                    
                     if(obj[x][i]==sameone){
-                        return True;
+                        return true;
                     }else if(obj[x][i]=="_"){
-                        column = False;
+                        column = false;
                         break;
                     }
                 }
-                column=False;
+                column=false;
             }
         }else{
             //checkboth
             if(obj[x][y+1]!=otherone  && obj[x][y-1]!=otherone){
-                column = False;
+                column = false;
             }else if(obj[x][y+1]!=otherone){
-                //checkonly up
+                //checkonly left
                 for(int i=y-2;i>=0;i--){
+                    if(i==-1){
+                        break;
+                    }
                     if(obj[x][i]==sameone){
-                        return True;
+                        return true;
                     }else if(obj[x][i]=="_"){
-                        column = False;
+                        column = false;
                         break;
                     }
                 }
-                column= False;
+                column= false;
             }else if(obj[x][y-1]!=otherone){
-                //checkonly down
+                //checkonly right
                 for(int i=y+2;i<8;i++){
+                    if(i==8){
+                        break;
+                    }
                     if(obj[x][i]==sameone){
-                        return True;
+                        return true;
                     }else if(obj[x][i]=="_"){
-                        column = False;
+                        column = false;
                         break;
                     }
                 }
-                column=False;
+                column=false;
             }else{
                 //checkboth
                 for(int i=y-2;i>=0;i--){
+                    if(i==-1){
+                        break;
+                    }
                     if(obj[x][i]==sameone){
-                        return True;
+                        return true;
                     }else if(obj[x][i]=="_"){
-                        column = False;
+                        column = false;
                         break;
                     }
                 }
                 for(int i=y+2;i<8;i++){
+                    if(i==8){
+                        break;
+                    }
                     if(obj[x][i]==sameone){
-                        return True;
+                        return true;
                     }else if(obj[x][i]=="_"){
-                        column = False;
+                        column = false;
                         break;
                     }
                 }
-                column=False;
+                column=false;
             }
         }
         //checkdiagonal 
+        
 
 
-
-        return False;
+        return false;
     }
 }
