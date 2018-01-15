@@ -15,5 +15,31 @@ class Main
                 if()
             }
         }
-    }   
+    }
+    static move(int player, int x, int y){
+        // output[x][y] = player==1? 1: 0;
+        if(checkValid(player,x,y)){
+            // Play the move if valid
+        }else{
+            // Ask again for the input
+        }
+    }
+    static checkValid(int player, int x, int y){
+        boolean valid = false;
+        int required = player==1? 2: 1;
+        int consecutive = player==1? 1: 2;
+        for(int i=y+1;i<8;){
+            if(output[x][i]==consecutive){
+                i++;
+            }else{
+                if(output[x][i]==required){
+                    valid = true;
+                    required = (required+2)%2 +1;
+                    consecutive = (consecutive+2)%2 +1;
+                }else{
+                    valid = false;
+                }
+            }
+        }
+    }
 }
