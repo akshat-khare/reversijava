@@ -1,10 +1,12 @@
 import java.util.*;
-public class ui{
+public class uiautomated{
     static String[][] disp = new String[8][8];
     // static int onesscore = 0;
     // static int twoscore = 0;
     static int[] score = new int[3];
     static int numvalidmoves = 0;
+    static int thistimex=0;
+    static int thistimey=0;
     public static void main(String[] args) {
         //Random random = new Random();
         initialize();
@@ -59,12 +61,12 @@ public class ui{
 
             System.out.println("Score is: player 1 has "+score[1]+" points and player 2 has "+score[2]+" points");
             System.out.println("you are player "+chanceofplayer);
-            System.out.println("Enter your x coordinate where you want to place: ");
-            int x=s.nextInt();
-            // System.out.println("x is "+x);
-            System.out.println("Enter your y coordinate where you want to place: ");
-            int y=s.nextInt();
-            // System.out.println("y is "+y);
+            // System.out.println("Enter your x coordinate where you want to place: ");
+            int x=thistimex;
+            System.out.println("x is "+x);
+            // System.out.println("Enter your y coordinate where you want to place: ");
+            int y=thistimey;
+            System.out.println("y is "+y);
             boolean wasvalid = checkValidV2(disp, x, y, chanceofplayer);
             if(wasvalid){
                 System.out.println("your doing was valid");
@@ -368,6 +370,7 @@ public class ui{
         String otherone = (3- (player))+"";
         boolean finbool=false;
         numvalidmoves=0;
+        Vector<int[]> movevec=new  Vector<int[]>();
         for(int k=0;k<8;k++){
             for(int l=0;l<8;l++){
 
@@ -625,6 +628,10 @@ public class ui{
 
                 if(horizontalleft==true |horizontalright==true|verticaldown==true|verticalup==true|forwarddown==true|forwardup==true|backup==true|backdown==true){
                     obj[x][y]="$";
+                    int[] movem = new int[2];
+                    movem[0] = x;
+                    movem[1]=y;
+                    movevec.add(movem);
                     numvalidmoves++;
                     // score[player]=score[player]+1;
                     // score[3-player]=score[3-player] -(score[player]-initialscore-1);    
@@ -636,6 +643,13 @@ public class ui{
 
             }
         }
+        Random randomno = new Random();
+        if(numvalidmoves==0){
+            return false;
+        }
+        int randnum = randomno.nextInt(numvalidmoves);
+        thistimex = movevec.get(randnum)[0];
+        thistimey = movevec.get(randnum)[1];
         return finbool;
     }
 }
