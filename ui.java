@@ -32,6 +32,28 @@ public class ui{
             if(score[1]+score[2]==64){
                 break;
             }
+            String[][] tempdisc =new  String[8][8];
+            for(int h=0;h<8;h++){
+                for(int g=0;g<8;g++){
+                    tempdisc[h][g]=disp[h][g];
+                }
+            }
+            boolean movesav = checkifvalid(tempdisc, chanceofplayer);
+            if(movesav){
+                System.out.println("you have a valid move and it is =");
+                System.out.println("\\"+" "+Arrays.toString(columnindex));
+                for(int i=0;i<8;i++){
+                    System.out.println(i+" "+Arrays.toString(tempdisc[i]));
+                }
+            }else{
+                System.out.println("you have no valid move");
+            }
+            // System.out.println("")
+            // System.out.println("\\"+" "+Arrays.toString(columnindex));
+            //     for(int i=0;i<8;i++){
+            //         System.out.println(i+" "+Arrays.toString(tempdisc[i]));
+            //     }
+
             System.out.println("Score is: player 1 has "+score[1]+" points and player 2 has "+score[2]+" points");
             System.out.println("you are player "+chanceofplayer);
             System.out.println("Enter your x coordinate where you want to place: ");
@@ -42,7 +64,7 @@ public class ui{
             // System.out.println("y is "+y);
             boolean wasvalid = checkValidV2(disp, x, y, chanceofplayer);
             if(wasvalid){
-                System.out.println("your turn was valid");
+                System.out.println("your doing was valid");
 
                 System.out.println("\\"+" "+Arrays.toString(columnindex));
                 for(int i=0;i<8;i++){
@@ -50,7 +72,7 @@ public class ui{
                 }
                 chanceofplayer = 3-chanceofplayer;
             }else{
-                System.out.println("Your chance was invalid");
+                System.out.println("Your doing was invalid");
                 System.out.println("\\"+" "+Arrays.toString(columnindex));
                 for(int i=0;i<8;i++){
                     System.out.println(i+" "+Arrays.toString(disp[i]));
@@ -120,7 +142,7 @@ public class ui{
                             obj[tempx][tempy]=sameone;
                             tempx--;
                             tempy++;
-                            score[player]=score[player]+i+2;
+                            score[player]=score[player]+i+1;
                         }
                         forwardup=true;
 
@@ -162,7 +184,7 @@ public class ui{
                             obj[tempx][tempy]=sameone;
                             tempx++;
                             tempy--;
-                            score[player] = score[player]+i+2;
+                            score[player] = score[player]+i+1;
                         }
                         forwarddown=true;
                         break;
@@ -203,7 +225,7 @@ public class ui{
                             obj[tempx][tempy]=sameone;
                             tempx--;
                             tempy--;
-                            score[player] = score[player]+i+2;
+                            score[player] = score[player]+i+1;
                         }
                         backup=true;
                         break;
@@ -243,7 +265,7 @@ public class ui{
                             obj[tempx][tempy]=sameone;
                             tempx++;
                             tempy++;
-                            score[player] = score[player]+i+2;
+                            score[player] = score[player]+i+1;
                         }
                         forwardup=true;
                         break;
@@ -267,7 +289,7 @@ public class ui{
                 if(obj[x][i].equals(sameone)){
                     for(int j=y+1;j<=i-1;j++){
                         obj[x][j]=sameone;
-                        score[player] = score[player]+i-y;
+                        score[player] = score[player]+i-y-1;
                     }
                     horizontalright= true;
                     // System.out.println("true saabit ho chuka hai");
@@ -285,7 +307,7 @@ public class ui{
                 if(obj[x][i].equals(sameone)){
                     for(int j=y-1;j>=i+1;j--){
                         obj[x][j]=sameone;
-                        score[player] = score[player]+y-i;
+                        score[player] = score[player]+y-i-1;
                     }
                     horizontalleft= true;
                     
@@ -303,7 +325,7 @@ public class ui{
                 if(obj[i][y].equals(sameone)){
                     for(int j=x+1;j<=i-1;j++){
                         obj[j][y]=sameone;
-                        score[player] = score[player]+i-x;
+                        score[player] = score[player]+i-x-1;
                     }
                     verticaldown= true;
                     break;
@@ -318,7 +340,7 @@ public class ui{
                 if(obj[i][y].equals(sameone)){
                     for(int j=x-1;j>=i+1;j--){
                         obj[j][y]=sameone;
-                        score[player] = score[player]+x-i;
+                        score[player] = score[player]+x-i-1;
                     }
                     verticalup= true;
                     break;
@@ -330,10 +352,284 @@ public class ui{
 
         if(horizontalleft==true |horizontalright==true|verticaldown==true|verticalup==true|forwarddown==true|forwardup==true|backup==true|backdown==true){
             obj[x][y]=sameone;
-            score[3-player]=score[3-player] -(score[player]-initialscore-1);
+            score[player]=score[player]+1;
+            score[3-player]=score[3-player] -(score[player]-initialscore-1);    
             return true;
         }else{
             return false;
         }
+    }
+    public static boolean checkifvalid(String[][] obj,int player){
+        String sameone = player+"";
+        String otherone = (3- (player))+"";
+        boolean finbool=false;
+        for(int k=0;k<8;k++){
+            for(int l=0;l<8;l++){
+
+                int x=k;
+                int y=l;
+                // if(obj[x][y].equals(sameone)| obj[x][y].equals(otherone)){
+                //     continue;
+                // }
+
+                // int initialscore = score[player];
+                // boolean row = false;
+                // boolean column =false;
+                // boolean diagonalforwardlash = false;
+                // boolean diagonalbackwardlash = false;
+                // System.out.println("sameone is "+sameone);
+                // System.out.println("otherone is "+otherone);
+                // System.out.println("player is "+player);
+                if(obj[x][y].equals("1")|obj[x][y].equals("2")){
+                    continue;
+                }
+                
+                //checkforwaddiagonal/
+                //x and y
+                //check up x- y+    x-1 times if x+y<=7  6-y if x+y>7
+                boolean forwardup=false;
+                if(x==1 | x==0| y==6 | y==7){
+                    //upnotpossbile
+                }else{
+                    if(!(obj[x-1][y+1].equals(otherone))){
+                        //upnotpossible
+                    }else{
+                        int numtimes=0;
+                        if(x+y<=7){
+                            numtimes= x-1;
+                        }else{
+                            numtimes= 6-y;
+                        }
+                        int tempx= x-2;
+                        int tempy= y+2;
+                        for(int i=0;i<numtimes;i++){
+                            if(obj[tempx][tempy].equals(sameone)){
+                                // tempx= x-1;
+                                // tempy= y+1;
+                                // for(int j=0;j<=i;j++){
+                                //     obj[tempx][tempy]=sameone;
+                                //     tempx--;
+                                //     tempy++;
+                                //     score[player]=score[player]+i+1;
+                                // }
+                                forwardup=true;
+
+                                break;
+
+                            }else if(obj[tempx][tempy].equals("_") | obj[tempx][tempy].equals("=") ){
+                                //upnotpossible
+                                break;
+                            }
+                            tempx--;
+                            tempy++;
+                        }
+                        //upnotpossible
+                    }
+                }
+                //check down
+                //x++ y-- y-1 times if x+y<=7 6-x if x+y>7
+                boolean forwarddown =false;
+                if(x==6 | x==7| y==0 | y==1){
+                    //upnotpossbile
+                }else
+                {
+                    if(!(obj[x+1][y-1].equals(otherone))){
+                        //upnotpossible
+                    }else{
+                        int numtimes=0;
+                        if(x+y<=7){
+                            numtimes= y-1;
+                        }else{
+                            numtimes= 6-x;
+                        }
+                        int tempx= x+2;
+                        int tempy= y-2;
+                        for(int i=0;i<numtimes;i++){
+                            if(obj[tempx][tempy].equals(sameone)){
+                                // tempx= x+1;
+                                // tempy= y-1;
+                                // for(int j=0;j<=i;j++){
+                                //     obj[tempx][tempy]=sameone;
+                                //     tempx++;
+                                //     tempy--;
+                                //     score[player] = score[player]+i+1;
+                                // }
+                                forwarddown=true;
+                                break;
+
+                            }else if(obj[tempx][tempy].equals("_") | obj[tempx][tempy].equals("=")){
+                                //upnotpossible
+                                break;
+                            }
+                            tempx++;
+                            tempy--;
+                        }
+                        //upnotpossible
+                    }
+                }
+                //checkbackslash
+                //
+                //checkup x-- y-- if y>=x x-1 times else y-1 times
+                boolean backup = false;
+                if(x==0|x==1|y==0|y==1){
+
+                }else{
+                    if(!(obj[x-1][y-1].equals(otherone))){
+                        //upnotpossible
+                    }else{
+                        int numtimes=0;
+                        if(x<=y){
+                            numtimes= x-1;
+                        }else{
+                            numtimes= y-1;
+                        }
+                        int tempx= x-2;
+                        int tempy= y-2;
+                        for(int i=0;i<numtimes;i++){
+                            if(obj[tempx][tempy].equals(sameone)){
+                                // tempx= x-1;
+                                // tempy= y-1;
+                                // for(int j=0;j<=i;j++){
+                                //     obj[tempx][tempy]=sameone;
+                                //     tempx--;
+                                //     tempy--;
+                                //     score[player] = score[player]+i+1;
+                                // }
+                                backup=true;
+                                break;
+
+                            }else if(obj[tempx][tempy].equals("_") | obj[tempx][tempy].equals("=")){
+                                //upnotpossible
+                                break;
+                            }
+                            tempx--;
+                            tempy--;
+                        }
+                        //upnotpossible
+                    }
+                }
+                boolean backdown = false;
+                
+                // checkdown if y>=x 6-y times else 6-x times
+                if(x==6|x==7|y==6|y==7){
+
+                }else{
+                    if(!(obj[x+1][y+1].equals(otherone))){
+                        //upnotpossible
+                    }else{
+                        int numtimes=0;
+                        if(x<=y){
+                            numtimes= 6-y;
+                        }else{
+                            numtimes= 6-x;
+                        }
+                        int tempx= x+2;
+                        int tempy= y+2;
+                        for(int i=0;i<numtimes;i++){
+                            if(obj[tempx][tempy].equals(sameone)){
+                                // tempx= x+1;
+                                // tempy= y+1;
+                                // for(int j=0;j<=i;j++){
+                                //     obj[tempx][tempy]=sameone;
+                                //     tempx++;
+                                //     tempy++;
+                                //     score[player] = score[player]+i+1;
+                                // }
+                                forwardup=true;
+                                break;
+
+                            }else if(obj[tempx][tempy].equals("_") | obj[tempx][tempy].equals("=")){
+                                //upnotpossible
+                                break;
+                            }
+                            tempx++;
+                            tempy++;
+                        }
+                        //upnotpossible
+                    }
+                }
+                //horizontal
+                //check right
+                // System.out.println("it must enter here for righthori");
+                boolean horizontalright =false;
+                if(!(y==6| y==7) && obj[x][y+1].equals(otherone)){
+                    for(int i=y+2;i<=7;i++){
+                        if(obj[x][i].equals(sameone)){
+                            // for(int j=y+1;j<=i-1;j++){
+                            //     obj[x][j]=sameone;
+                            //     score[player] = score[player]+i-y-1;
+                            // }
+                            horizontalright= true;
+                            // System.out.println("true saabit ho chuka hai");
+                            break;
+                        }else if(obj[x][i].equals("_") | obj[x][i].equals("=")){
+                            break;
+                        }
+                    }
+                }
+                // System.out.println("it must enter here for lefthori");
+                boolean horizontalleft =false;
+                if(!(y==0| y==1) && obj[x][y-1].equals(otherone)){
+                    // System.out.println("it must enter here for ");
+                    for(int i=y-2;i>=0;i--){
+                        if(obj[x][i].equals(sameone)){
+                            // for(int j=y-1;j>=i+1;j--){
+                            //     obj[x][j]=sameone;
+                            //     score[player] = score[player]+y-i-1;
+                            // }
+                            horizontalleft= true;
+                            
+                            // System.out.println("true saabit ho chuka hai");
+                            break;
+                        }else if(obj[x][i].equals("_") | obj[x][i].equals("=")){
+                            break;
+                        }
+                    }
+                }
+
+                boolean verticaldown =false;
+                if(!(x==6| x==7) && obj[x+1][y].equals(otherone)){
+                    for(int i=x+2;i<=7;i++){
+                        if(obj[i][y].equals(sameone)){
+                            // for(int j=x+1;j<=i-1;j++){
+                            //     obj[j][y]=sameone;
+                            //     score[player] = score[player]+i-x-1;
+                            // }
+                            verticaldown= true;
+                            break;
+                        }else if(obj[i][x].equals("_") | obj[i][x].equals("=")){
+                            break;
+                        }
+                    }
+                }
+                boolean verticalup =false;
+                if(!(x==0| x==1) && obj[x-1][y].equals(otherone)){
+                    for(int i=x-2;i>=0;i--){
+                        if(obj[i][y].equals(sameone)){
+                            // for(int j=x-1;j>=i+1;j--){
+                            //     obj[j][y]=sameone;
+                            //     score[player] = score[player]+x-i-1;
+                            // }
+                            verticalup= true;
+                            break;
+                        }else if(obj[i][y].equals("_") | obj[i][y].equals("=")){
+                            break;
+                        }
+                    }
+                }
+
+                if(horizontalleft==true |horizontalright==true|verticaldown==true|verticalup==true|forwarddown==true|forwardup==true|backup==true|backdown==true){
+                    obj[x][y]="$";
+                    // score[player]=score[player]+1;
+                    // score[3-player]=score[3-player] -(score[player]-initialscore-1);    
+                    finbool= true;
+                }
+
+
+
+
+            }
+        }
+        return finbool;
     }
 }
