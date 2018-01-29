@@ -49,13 +49,25 @@ gameundergoing:
     swi 0x203
     bl computelogtwo
     mov r5,r1
-    mov r0,#0
+    mov r0,#8
     mov r1,#12
+    mov r2, r5
+    swi 0x205
+    mov r0,#0
+    mov r1,#13
     ldr r2,=Promptforpressy
     swi 0x204
     swi 0x203
     bl computelogtwo
+    sub r1,r1,#8
     mov r6,r1
+    mov r0,#8
+    mov r1,#13
+    mov r2, r6
+    swi 0x205
+
+
+    
     b endgame
 
 computelogtwo:
