@@ -47,14 +47,30 @@ gameundergoing:
     ldr r2,=Promptforpressx
     swi 0x204
     swi 0x203
-    mov r5,r0
+    bl computelogtwo
+    mov r5,r1
     mov r0,#0
     mov r1,#12
     ldr r2,=Promptforpressy
     swi 0x204
     swi 0x203
-    mov r6,r0
+    bl computelogtwo
+    mov r6,r1
     b endgame
+
+computelogtwo:
+    @ STMFD sp! {r1}
+    mov r1,#1
+loopcomputlogtwo:
+    mov r0,r0,LSR #1
+    cmp r0,#0
+    beq endcomputelogtwo
+    add r1,r1,#1
+    b loopcomputlogtwo
+endcomputelogtwo:
+    @ LDMFD sp! {r1}
+    mov pc, lr 
+
     
 
     @ START OF ARRAY PRINTER FUNCTION------------------------------------
