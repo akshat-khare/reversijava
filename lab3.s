@@ -48,7 +48,7 @@ gameundergoing:
     swi 0x204
     swi 0x203
     bl computelogtwo
-    mov r5,r1   @x-coordinate
+    mov r5,r1   @x-coordinate as in mathematical 2d array
     mov r0,#8
     mov r1,#12
     mov r2, r5
@@ -59,34 +59,64 @@ gameundergoing:
     swi 0x204
     swi 0x203
     bl computelogtwo
-    mov r6,r1   @y-coordinate
+    @sub r1,r1,#8   Not Required
+    mov r6,r1   @y-coordinate as in mathematical 2d array
+    mov r0,#8
+    mov r1,#13
+    mov r2, r6
+    swi 0x205
     @Now we must call the function checkvalidity
     bl checkvalidity
     b endgame
 
 checkvalidity:
-    STMFD sp!,{r0,r5-r6} @ r0 -> turn, r5 -> x-coordinate, r6 -> y-coordinate
-    mla r6,#8,r6,
-    mov r2,r6
-horizontalright:
-    
+    STMFD sp!,{r0-r6} @ r8 -> dynamic current turn, r5 -> x-coordinate, r6 -> y-coordinate, r4 -> dynamic other player's turn
+    @ mov r2, r5
+    @ mov r3, r6
+    rsb r4,r8,#3
+    @r3 -> maintains a counter on how many times the value flipped
 
-    LDMFD sp!,{r0,r5-r6}
-    sub r1,r1,#8
-    mov r6,r1
-    mov r0,#8
-    mov r1,#13
-    mov r2, r6
-    swi 0x205
+horizontalright:
+    STMFD sp!,{r5,r6}
+    mov r3,#0
+    STMFD sp!,{r4,r8}
+rightloop:
+    add r5,r5,#1
+    cmp r5,#8
+    beq horizontalrightexit       @To be inserted
+    mov r1,#8
+    mla r0,r1,r6,r5
+    mov r1,#4
+    mul r0,r1,r0
+    ldr r1,[r9,r0]                 @r1 now stores the value (0,1,2) at the next horizontal right position
+    cmp r1,r8
+    beq rightloop
+    cmp r1,r4
+    bne horizontalrightexit       @To be inserted
+    add r3,r3,#1
+    cmp r3,#2
+    beq horizontalrightexit       @Valid Move
+    mov r2,r4
+    mov r4,r8
+    mov r8,r2
+    b rightloop
+horizontalrightexit:
+    LDMFD sp!,{r4,r8}
+    LDMFD sp!,{r5,r6}
+    cmp r3,#2
+    beq endgame  @Valid Move (To be replaced)
+    bne horizontalleft
+    
+horizontalleft:
+
+    LDMFD sp!,{r0-r6}
+
     @input taken
     b endgame
 
-
-
-
 computelogtwo:
     @ STMFD sp! {r1}
-    mov r1,#1
+    mov r1,#0
 loopcomputlogtwo:
     mov r0,r0,LSR #1
     cmp r0,#0
