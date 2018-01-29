@@ -65,10 +65,11 @@ gameundergoing:
     mov r1,#13
     mov r2, r6
     swi 0x205
-
-
-    
+    @input taken
     b endgame
+
+
+
 
 computelogtwo:
     @ STMFD sp! {r1}
@@ -152,7 +153,14 @@ loopofinitialize:
     beq endofinitialize
     b loopofinitialize
 endofinitialize:
+    mov r0,#1
+    strb r0, [r9,#27]
+    strb r0, [r9,#36]
+    mov r0,#2
+    strb r0, [r9,#28]
+    strb r0, [r9,#35]
     ldr r7,=Score
+    mov r0, #2
     str r0,[r7]
     str r0,[r7,#4]
     LDMFD sp!,{r0-r1}
