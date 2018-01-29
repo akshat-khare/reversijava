@@ -48,15 +48,26 @@ gameundergoing:
     swi 0x204
     swi 0x203
     bl computelogtwo
-    mov r5,r1
+    mov r5,r1   @x-coordinate
     mov r0,#0
     mov r1,#12
     ldr r2,=Promptforpressy
     swi 0x204
     swi 0x203
     bl computelogtwo
-    mov r6,r1
+    mov r6,r1   @y-coordinate
+    @Now we must call the function checkvalidity
+    bl checkvalidity
     b endgame
+
+checkvalidity:
+    STMFD sp!,{r0,r5-r6} @ r0 -> turn, r5 -> x-coordinate, r6 -> y-coordinate
+    mov r1,r5
+    mov r2,r6
+horizontalright:
+    
+
+    LDMFD sp!,{r0,r5-r6}
 
 computelogtwo:
     @ STMFD sp! {r1}
