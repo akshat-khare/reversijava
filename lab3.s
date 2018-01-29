@@ -49,8 +49,12 @@ gameundergoing:
     swi 0x203
     bl computelogtwo
     mov r5,r1   @x-coordinate
-    mov r0,#0
+    mov r0,#8
     mov r1,#12
+    mov r2, r5
+    swi 0x205
+    mov r0,#0
+    mov r1,#13
     ldr r2,=Promptforpressy
     swi 0x204
     swi 0x203
@@ -62,12 +66,23 @@ gameundergoing:
 
 checkvalidity:
     STMFD sp!,{r0,r5-r6} @ r0 -> turn, r5 -> x-coordinate, r6 -> y-coordinate
-    mov r1,r5
+    mla r6,#8,r6,
     mov r2,r6
 horizontalright:
     
 
     LDMFD sp!,{r0,r5-r6}
+    sub r1,r1,#8
+    mov r6,r1
+    mov r0,#8
+    mov r1,#13
+    mov r2, r6
+    swi 0x205
+    @input taken
+    b endgame
+
+
+
 
 computelogtwo:
     @ STMFD sp! {r1}
@@ -151,7 +166,14 @@ loopofinitialize:
     beq endofinitialize
     b loopofinitialize
 endofinitialize:
+    mov r0,#1
+    strb r0, [r9,#27]
+    strb r0, [r9,#36]
+    mov r0,#2
+    strb r0, [r9,#28]
+    strb r0, [r9,#35]
     ldr r7,=Score
+    mov r0, #2
     str r0,[r7]
     str r0,[r7,#4]
     LDMFD sp!,{r0-r1}
