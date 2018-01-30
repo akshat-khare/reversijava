@@ -112,6 +112,11 @@ endforwarddown:
     @[r6,#52] has the boolean
     b backup
 endbackup:
+    @[r6,#56] has the boolean
+    b backdown
+endbackdown:
+    @[r6,#60] has the boolean
+
 
 
 
@@ -126,6 +131,18 @@ endbackup:
     cmp r3,r4
     beq hasvalidmove
     ldr r4, [r6,#44]
+    cmp r3,r4
+    beq hasvalidmove
+    ldr r4, [r6,#48]
+    cmp r3,r4
+    beq hasvalidmove
+    ldr r4, [r6,#52]
+    cmp r3,r4
+    beq hasvalidmove
+    ldr r4, [r6,#56]
+    cmp r3,r4
+    beq hasvalidmove
+    ldr r4, [r6,#60]
     cmp r3,r4
     beq hasvalidmove
     b invalidmove
@@ -513,7 +530,140 @@ endvalidforwarddown:
     b endforwarddown
 
 backup:
-    
+    mov r0,#1
+    ldr r4, [r6]
+    cmp r0, r4
+    bge notvalidbackup
+    ldr r4, [r6,#4]
+    cmp r0, r4
+    bge notvalidbackup
+    ldr r0, [r6]
+    sub r0, r0, #1
+    str r0, [r6, #16]
+    ldr r0, [r6,#4]
+    sub r0, r0,#1
+    str r0, [r6,#20]
+    ldr r4, [r6, #8]
+    sub r4, r4, #9
+    str r4, [r6, #24]
+    ldr r0, [r9,r4]
+    cmp r0, r5
+    beq loopbackup
+    b notvalidbackup
+loopbackup:
+    ldr r4, [r6,#24]
+    sub r4, r4, #9
+    str r4, [r6,#24]
+    ldr r4, [r6,#16]
+    sub r4,r4,#1
+    str r4, [r6,#16]
+    ldr r4, [r6,#20]
+    sub r4,r4,#1
+    str r4, [r6,#20]
+    ldr r4, [r6,#16]
+    mov r0,#-1
+    cmp r0,r4
+    beq notvalidbackup
+    ldr r4, [r6,#20]
+    cmp r0, r4
+    beq notvalidbackup
+    ldr r4, [r6,#24]
+    ldrb r0, [r9,r4]
+    mov r1, #0
+    cmp r1, r0
+    beq notvalidbackup
+    cmp r0, r5
+    beq loopbackup
+    cmp r0, r8
+    beq foundbackup
+foundbackup:
+    ldr r4, [r6,#24]
+    ldr r3, [r6,#8]
+    b loopoffoundbackup
+loopoffoundbackup:
+    add r4, r4, #9
+    cmp r3,r4
+    beq endvalidbackup
+    strb r8, [r9,r4]
+    b loopoffoundbackup
+notvalidbackup:
+    mov r4, #0
+    str r4, [r6,#56]
+    b endbackup
+endvalidbackup:
+    mov r4, #1
+    str r4, [r6,#56]
+    ldr r4, [r6,#8]
+    strb r8, [r9,r4]
+    b endbackup
+
+backdown:
+    mov r0,#6
+    ldr r4, [r6]
+    cmp r0, r4
+    ble notvalidbackdown
+    ldr r4, [r6,#4]
+    cmp r0, r4
+    ble notvalidbackdown
+    ldr r0, [r6]
+    add r0, r0, #1
+    str r0, [r6, #16]
+    ldr r0, [r6,#4]
+    add r0, r0,#1
+    str r0, [r6,#20]
+    ldr r4, [r6, #8]
+    add r4, r4, #9
+    str r4, [r6, #24]
+    ldr r0, [r9,r4]
+    cmp r0, r5
+    beq loopbackdown
+    b notvalidbackdown
+loopbackdown:
+    ldr r4, [r6,#24]
+    add r4, r4, #9
+    str r4, [r6,#24]
+    ldr r4, [r6,#16]
+    add r4,r4,#1
+    str r4, [r6,#16]
+    ldr r4, [r6,#20]
+    add r4,r4,#1
+    str r4, [r6,#20]
+    ldr r4, [r6,#16]
+    mov r0,#8
+    cmp r0,r4
+    beq notvalidbackdown
+    ldr r4, [r6,#20]
+    cmp r0, r4
+    beq notvalidbackdown
+    ldr r4, [r6,#24]
+    ldrb r0, [r9,r4]
+    mov r1, #0
+    cmp r1, r0
+    beq notvalidbackdown
+    cmp r0, r5
+    beq loopbackdown
+    cmp r0, r8
+    beq foundbackdown
+foundbackdown:
+    ldr r4, [r6,#24]
+    ldr r3, [r6,#8]
+    b loopoffoundbackdown
+loopoffoundbackdown:
+    sub r4, r4, #9
+    cmp r3,r4
+    beq endvalidbackdown
+    strb r8, [r9,r4]
+    b loopoffoundbackdown
+notvalidbackdown:
+    mov r4, #0
+    str r4, [r6,#60]
+    b endbackdown
+endvalidbackdown:
+    mov r4, #1
+    str r4, [r6,#60]
+    ldr r4, [r6,#8]
+    strb r8, [r9,r4]
+    b endbackdown
 
 invalidmove:
     mov r4,#0
