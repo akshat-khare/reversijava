@@ -70,10 +70,11 @@ gameundergoing:
     b endgame
 
 checkvalidity:
+    STMFD sp!, {lr}
     STMFD sp!,{r0-r6} @ r8 -> dynamic current turn, r5 -> x-coordinate, r6 -> y-coordinate, r4 -> dynamic other player's turn
     @ mov r2, r5
     @ mov r3, r6
-    rsb r4,r8,#3
+    rsb r4,r8,#3    @other player
     @r3 -> maintains a counter on how many times the value flipped
 
 horizontalright:
@@ -86,9 +87,7 @@ rightloop:
     beq horizontalrightexit       @To be inserted
     mov r1,#8
     mla r0,r1,r6,r5
-    mov r1,#4
-    mul r0,r1,r0
-    ldr r1,[r9,r0]                 @r1 now stores the value (0,1,2) at the next horizontal right position
+    ldrb r1,[r9,r0]                 @r1 now stores the value (0,1,2) at the next horizontal right position
     cmp r1,r8
     beq rightloop
     cmp r1,r4
@@ -112,7 +111,9 @@ horizontalleft:
     LDMFD sp!,{r0-r6}
 
     @input taken
-    b endgame
+    LDMFD sp!, {lr}
+    mov pc, lr
+    @b endgame
 
 computelogtwo:
     @ STMFD sp! {r1}
