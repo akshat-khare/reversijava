@@ -104,6 +104,17 @@ endverticalup:
     b verticaldown
 endverticaldown:
     @[r6,#44] has the boolean
+    b forwardup
+endforwardup:
+    @[r6,#48] has the boolean
+    b forwarddown
+endforwarddown:
+    @[r6,#52] has the boolean
+    b backup
+endbackup:
+
+
+
     ldr r4, [r6,#32]
     mov r3, #1
     cmp r3,r4
@@ -360,6 +371,149 @@ endvalidverticaldown:
     ldr r4, [r6,#8]
     strb r8, [r9,r4]
     b endverticaldown
+
+forwardup:
+    mov r0, #1
+    ldr r4, [r6,#4]
+    cmp r0,r4
+    bge notvalidforwardup
+    mov r0,#6
+    ldr r4, [r6]
+    cmp r0,r4
+    ble notvalidforwardup
+    ldr r0, [r6]
+    add r0,r0,#1
+    str r0, [r6,#16]
+    ldr r0, [r6,#4]
+    sub r0,r0,#1
+    str r0, [r6,#20]
+    ldr r4, [r6,#8]
+    sub r4,r4,#7
+    str r4, [r6,#24]
+    ldr r0, [r9,r4]
+    cmp r0, r5
+    beq loopforwardup
+    b notvalidforwardup
+loopforwardup:
+    ldr r4, [r6,#24]
+    sub r4, r4, #7
+    str r4, [r6,#24]
+    ldr r4, [r6,#16]
+    add r4,r4,#1
+    str r4, [r6,#16]
+    ldr r4, [r6,#20]
+    sub r4,r4,#1
+    str r4, [r6,#20]
+    ldr r4, [r6,#16]
+    mov r0,#8
+    cmp r0,r4
+    beq notvalidforwardup
+    ldr r4, [r6,#20]
+    mov r0, #-1
+    cmp r0, r4
+    beq notvalidforwardup
+    ldr r4, [r6,#24]
+    ldrb r0, [r9,r4]
+    mov r1, #0
+    cmp r1, r0
+    beq notvalidforwardup
+    cmp r0, r5
+    beq loopforwardup
+    cmp r0, r8
+    beq foundforwardup
+foundforwardup:
+    ldr r4, [r6,#24]
+    ldr r3, [r6,#8]
+    b loopoffoundforwardup
+loopoffoundforwardup:
+    add r4, r4, #7
+    cmp r3,r4
+    beq endvalidforwardup
+    strb r8, [r9,r4]
+    b loopoffoundforwardup
+notvalidforwardup:
+    mov r4, #0
+    str r4, [r6,#48]
+    b endforwardup
+endvalidforwardup:
+    mov r4, #1
+    str r4, [r6,#48]
+    ldr r4, [r6,#8]
+    strb r8, [r9,r4]
+    b endforwardup
+
+forwarddown:
+    mov r0, #6
+    ldr r4, [r6,#4]
+    cmp r0, r4
+    ble notvalidforwarddown
+    mov r0, #1
+    ldr r4, [r6]
+    cmp r0, r4
+    bge notvalidforwarddown
+    ldr r0, [r6]
+    sub r0, r0, #1
+    str r0, [r6,#16]
+    ldr r0, [r6,#4]
+    add r0, r0,#1
+    str r0, [r6,#20]
+    ldr r4, [r6, #8]
+    add r4, r4, #7
+    str r4, [r6,#24]
+    ldr r0, [r9,r4]
+    cmp r0, r5
+    beq loopforwarddown
+    b notvalidforwarddown
+loopforwarddown:
+    ldr r4, [r6,#24]
+    add r4, r4, #7
+    str r4, [r6,#24]
+    ldr r4, [r6,#16]
+    sub r4,r4,#1
+    str r4, [r6,#16]
+    ldr r4, [r6,#20]
+    add r4,r4,#1
+    str r4, [r6,#20]
+    ldr r4, [r6,#16]
+    mov r0,#-1
+    cmp r0, r4
+    beq notvalidforwarddown
+    ldr r4, [r6,#20]
+    mov r0, #8
+    cmp r0, r4
+    beq notvalidforwarddown
+    ldr r4, [r6,#24]
+    ldrb r0, [r9,r4]
+    mov r1, #0
+    cmp r1, r0
+    beq notvalidforwarddown
+    cmp r0, r5
+    beq loopforwarddown
+    cmp r0, r8
+    beq foundforwarddown
+foundforwarddown:
+    ldr r4, [r6,#24]
+    ldr r3, [r6,#8]
+    b loopoffoundforwarddown
+loopoffoundforwarddown:
+    sub r4, r4, #7
+    cmp r3,r4
+    beq endvalidforwarddown
+    strb r8, [r9,r4]
+    b loopoffoundforwarddown
+notvalidforwarddown:
+    mov r4, #0
+    str r4, [r6,#52]
+    b endforwarddown
+endvalidforwarddown:
+    mov r4, #1
+    str r4, [r6,#52]
+    ldr r4, [r6,#8]
+    strb r8, [r9,r4]
+    b endforwarddown
+
+backup:
+    
 
 invalidmove:
     mov r4,#0
