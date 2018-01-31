@@ -46,7 +46,12 @@ gameundergoing:
     mov r1,#12
     ldr r2,=Promptforpressx
     swi 0x204
+    mov r3, #0
+    mov r0, #0
+xinterrupt:    
     swi 0x203
+    cmp r0, r3
+    beq xinterrupt
     bl computelogtwo
     ldr r6,=IndexArray
     str r1,[r6]
@@ -59,9 +64,14 @@ gameundergoing:
     mov r1,#13
     ldr r2,=Promptforpressy
     swi 0x204
+    mov r3, #0
+    mov r0,#0
+yinterrupt:
     swi 0x203
+    cmp r0, r3
+    beq yinterrupt
     bl computelogtwo
-    sub r1,r1,#8  @ Not Required
+    sub r1,r1,#8  @  Required
     str r1,[r6,#4]
     mov r5,r1   @y-coordinate as in mathematical 2d array
     mov r0,#8
@@ -70,7 +80,19 @@ gameundergoing:
     swi 0x205
     @Now we must call the function checkvalidity
     bl checkvalidity
+    bl scoreupdate
     bl arrayprinter
+    mov r0,#1
+    cmp r0, r4
+    beq twasvalidmove
+    b twasinvalidmove
+twasvalidmove:
+    mov r8, r5
+    b gameundergoing
+twasinvalidmove:
+    b gameundergoing
+
+
     b endgame
 
 checkvalidity:
@@ -407,7 +429,7 @@ forwardup:
     ldr r4, [r6,#8]
     sub r4,r4,#7
     str r4, [r6,#24]
-    ldr r0, [r9,r4]
+    ldrb r0, [r9,r4]
     cmp r0, r5
     beq loopforwardup
     b notvalidforwardup
@@ -477,7 +499,7 @@ forwarddown:
     ldr r4, [r6, #8]
     add r4, r4, #7
     str r4, [r6,#24]
-    ldr r0, [r9,r4]
+    ldrb r0, [r9,r4]
     cmp r0, r5
     beq loopforwarddown
     b notvalidforwarddown
@@ -546,7 +568,7 @@ backup:
     ldr r4, [r6, #8]
     sub r4, r4, #9
     str r4, [r6, #24]
-    ldr r0, [r9,r4]
+    ldrb r0, [r9,r4]
     cmp r0, r5
     beq loopbackup
     b notvalidbackup
@@ -614,7 +636,7 @@ backdown:
     ldr r4, [r6, #8]
     add r4, r4, #9
     str r4, [r6, #24]
-    ldr r0, [r9,r4]
+    ldrb r0, [r9,r4]
     cmp r0, r5
     beq loopbackdown
     b notvalidbackdown
@@ -772,6 +794,28 @@ endofinitialize:
     mov pc,lr
     @ END OF initialize FUNCTION------------------
 
+scoreupdate:
+    STMFD sp!, {r0-r4}
+    mov r0, #0
+    mov r1, #0
+    mov r2, #0
+loopscoreupdate:
+    ldrb r4, [r9, r2]
+    mov r3, #1
+    cmp r4 , r3
+    addeq r0, r0, #1
+    mov r3, #2
+    cmp r4, r3
+    addeq r1, r1, #1
+    add r2, r2, #1
+    cmp r2, #64
+    beq exitscoreupdate
+    b loopscoreupdate
+exitscoreupdate:
+    str r0, [r7]
+    str r1, [r7,#4]
+    LDMFD sp!, {r0-r4}
+    mov pc, lr
 
 
 totalexit:
