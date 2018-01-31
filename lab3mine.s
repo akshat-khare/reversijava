@@ -42,10 +42,15 @@ gameundergoing:
     ldr r0,[r2,r0,lsl#2]
     swi 0x200
     LDMFD sp!,{r0,r2}
+    mov r0, #12
+    swi 0x208
+    mov r0, #13
+    swi 0x208
     mov r0,#0
     mov r1,#12
     ldr r2,=Promptforpressx
     swi 0x204
+takeinput:
     mov r3, #0
     mov r0, #0
 xinterrupt:    
@@ -78,7 +83,20 @@ yinterrupt:
     mov r1,#13
     mov r2, r5
     swi 0x205
+    mov r0,#0
+    mov r3,#0
+confirmationbutton:
+    swi 0x202
+    cmp r0, r3
+    beq confirmationbutton
+    cmp r0, #0x02
+    beq confirmed
+    cmp r0, #0x01
+    beq takeinput
     @Now we must call the function checkvalidity
+confirmed:
+    mov r0, #0x03
+    swi 0x201
     bl checkvalidity
     bl scoreupdate
     bl arrayprinter
@@ -88,8 +106,12 @@ yinterrupt:
     b twasinvalidmove
 twasvalidmove:
     mov r8, r5
+    mov r0, #0x02
+    swi 0x201
     b gameundergoing
 twasinvalidmove:
+    mov r0, #0x01
+    swi 0x201
     b gameundergoing
 
 
