@@ -1,0 +1,14 @@
+Instructions to play:
+1.Begin the game by pressing the play button
+2.Your turn would be displayed by the 8-segment display where 1 represents white and 2 represents black
+3.You have to now enter the coordinates of your move where x is the column number and y is the row number.
+4.Now press left black button for going with the coordinates you entered or press right black button for resetting the coordinates.
+5.Now the processing will happen and both led will light up when the process is undergoing.
+6.After the processing is done left led will light up if the move was valid, or right led will light up if the move was invalid. If the move was invalid repeat from step 3.
+7.When there is no move possible "game over" will be displayed on screen and final scores would be displayed.
+8.End of instructions.
+
+Akshat Khare
+2016CS10315
+Divyanshu Saxena
+2016CS10316
