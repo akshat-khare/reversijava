@@ -21,6 +21,28 @@
     .text
     bl initialize @gives array in r9 and score in r7
     bl arrayprinter
+    STMFD sp!, {r0-r2}
+    mov r0, #20
+    mov r1, #0
+    ldr r2,=gameintroduction
+    swi 0x204
+    mov r1, #2
+    ldr r2,=oneiswhite
+    swi 0x204
+    mov r1, #3
+    ldr r2,=twoisblack
+    swi 0x204
+    mov r1, #5
+    ldr r2, =madeby
+    swi 0x204
+    mov r1, #6
+    ldr r2, =akshatkhare
+    swi 0x204
+    mov r1, #7 
+    ldr r2, =divyanshusaxena
+    swi 0x204
+    LDMFD sp!, {r0-r2}
+
     mov r8,#1 @chance of player
     b gameundergoing
 endgame:
@@ -134,8 +156,24 @@ gotxandyfromnumber:
 
     @b novalidmoveavailible
 novalidmoveavailible:
+    ldr r0, [r6,#68]
+    cmp r0, #1
+    beq endgame
+    ldr r2,=ChancePassed
+    mov r0, #0
+    mov r1, #14
+    swi 0x204
+    mov r0, #1
+    str r0, [r6,#68]
+    mov r1, #3
+    rsb r8, r8, r1
+    b checkifmoveavailible
     b endgame
 yesthereisavalidmoveavailible:
+    mov r0, #14
+    swi 0x208
+    mov r0, #0
+    str r0, [r6,#68]
     b gameundergoing
 
 getxandyfromnumber:
@@ -893,7 +931,12 @@ arrayprinter:
 
 gotoprintloop:
     ldrb r2, [r9,r3]
-    swi 0x205
+    b getasci
+outasci:
+    STMFD sp!, {r0}
+    mov r0, r0, LSL #1
+    swi 0x207
+    LDMFD sp!, {r0}
     add r0,r0,#1
     add r3, r3,#1
     cmp r0,#9
@@ -926,7 +969,16 @@ exitprinter:
     swi 0x205
     LDMFD sp!, {r0-r3,r7,r9}
     mov pc, lr
-
+getasci:
+    cmp r2, #0
+    moveq r2, #'.
+    beq outasci
+    cmp r2, #1
+    moveq r2, #'W
+    beq outasci
+    cmp r2, #2
+    moveq r2, #'B
+    beq outasci
     @ END OF ARRAYPRINTER FUNCTION-------------------
 
 
@@ -989,14 +1041,21 @@ totalexit:
     .data
     Array: .space 64
     Score: .space 8
-    IndexArray: .space 68
+    IndexArray: .space 72
     Message: .asciz "reached here\n"
     ScoreString1: .asciz "score of player 1 is: "
     ScoreString2: .asciz "score of player 2 is: "
+    ChancePassed: .asciz "chance is passed"
     EndMessage: .asciz "game over"
     Promptforpressx: .asciz "enter x"
     Promptforpressy: .asciz "enter y" 
-    Xindex: .asciz "01234567"
+    Xindex: .asciz " 0 1 2 3 4 5 6 7"
+    oneiswhite: .asciz "P 1 is white (W)"
+    twoisblack: .asciz "P 2 is black (B)"
+    gameintroduction: .asciz "Reversi/Othello game"
+    madeby: .asciz "Made for COL216 by"
+    akshatkhare: .asciz "Akshat Khare"
+    divyanshusaxena: .asciz "Divyanshu Saxena"
     @Description
     @r8: player
     @r9: array
