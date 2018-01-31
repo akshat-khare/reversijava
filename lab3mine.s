@@ -42,6 +42,7 @@ gameundergoing:
     ldr r0,[r2,r0,lsl#2]
     swi 0x200
     LDMFD sp!,{r0,r2}
+takeinput:
     mov r0, #12
     swi 0x208
     mov r0, #13
@@ -50,7 +51,6 @@ gameundergoing:
     mov r1,#12
     ldr r2,=Promptforpressx
     swi 0x204
-takeinput:
     mov r3, #0
     mov r0, #0
 xinterrupt:    
@@ -97,6 +97,8 @@ confirmationbutton:
 confirmed:
     mov r0, #0x03
     swi 0x201
+    mov r0, #0
+    str r0, [r6,#64] @for type of checkvalidity when the loop isn't changed
     bl checkvalidity
     bl scoreupdate
     bl arrayprinter
@@ -108,14 +110,52 @@ twasvalidmove:
     mov r8, r5
     mov r0, #0x02
     swi 0x201
+checkifmoveavailible:
+    mov r0,#0
+    str r0,[r6]
+    str r0,[r6,#4]
+    str r0,[r6,#8]
+    mov r0, #1
+    str r0, [r6,#64]
+loopcheckifmoveavailible:
+    bl checkvalidity
+    @r4 has the boolean
+    mov r0,#1
+    cmp r0,r4
+    beq yesthereisavalidmoveavailible
+    ldr r0, [r6,#8]
+    add r0, r0,#1
+    str r0, [r6,#8]
+    cmp r0,#65
+    beq novalidmoveavailible
+    b getxandyfromnumber
+gotxandyfromnumber:
+    b loopcheckifmoveavailible
+
+    @b novalidmoveavailible
+novalidmoveavailible:
+    b endgame
+yesthereisavalidmoveavailible:
     b gameundergoing
+
+getxandyfromnumber:
+    STMFD sp!, {r0-r2}
+    ldr r0, [r6,#8]
+    mov r1, r0, LSR #3
+    mov r2, r1, LSL #3
+    sub r2, r0, r2
+    str r1, [r6,#4]
+    str r2, [r6,#0]
+    LDMFD sp!, {r0-r2}
+    b gotxandyfromnumber
+
 twasinvalidmove:
     mov r0, #0x01
     swi 0x201
     b gameundergoing
 
 
-    b endgame
+    @b endgame
 
 checkvalidity:
     STMFD sp!, {lr}
@@ -139,27 +179,83 @@ checkvalidity:
     b horizontalright
 endhorizontalright:
     @[r6,#32] has the boolean
+    ldr r0, [r6,#64]
+    cmp r0, #1
+    bne continueendhorizontalright
+    ldr r0, [r6,#32]
+    cmp r0,#1
+    beq hasvalidmove
+continueendhorizontalright:
     b horizontalleft
 endhorizontalleft:
     @[r6,#36] has the boolean
+    ldr r0, [r6,#64]
+    cmp r0, #1
+    bne continueendhorizontalleft
+    ldr r0, [r6,#36]
+    cmp r0,#1
+    beq hasvalidmove
+continueendhorizontalleft:
     b verticalup
 endverticalup:
     @[r6,#40] has the boolean
+    ldr r0, [r6,#64]
+    cmp r0, #1
+    bne continueendverticalup
+    ldr r0, [r6,#40]
+    cmp r0,#1
+    beq hasvalidmove
+continueendverticalup:
     b verticaldown
 endverticaldown:
     @[r6,#44] has the boolean
+    ldr r0, [r6,#64]
+    cmp r0, #1
+    bne continueendverticaldown
+    ldr r0, [r6,#44]
+    cmp r0,#1
+    beq hasvalidmove
+continueendverticaldown:
     b forwardup
 endforwardup:
     @[r6,#48] has the boolean
+    ldr r0, [r6,#64]
+    cmp r0, #1
+    bne continueendforwardup
+    ldr r0, [r6,#48]
+    cmp r0,#1
+    beq hasvalidmove
+continueendforwardup:
     b forwarddown
 endforwarddown:
     @[r6,#52] has the boolean
+    ldr r0, [r6,#64]
+    cmp r0, #1
+    bne continueendforwarddown
+    ldr r0, [r6,#52]
+    cmp r0,#1
+    beq hasvalidmove
+continueendforwarddown:
     b backup
 endbackup:
     @[r6,#56] has the boolean
+    ldr r0, [r6,#64]
+    cmp r0, #1
+    bne continueendendbackup
+    ldr r0, [r6,#56]
+    cmp r0,#1
+    beq hasvalidmove
+continueendendbackup:
     b backdown
 endbackdown:
     @[r6,#60] has the boolean
+    ldr r0, [r6,#64]
+    cmp r0, #1
+    bne continueendendbackdown
+    ldr r0, [r6,#60]
+    cmp r0,#1
+    beq hasvalidmove
+continueendendbackdown:
 
 
 
@@ -233,6 +329,11 @@ loophorizontalright:
     cmp r0,r8
     beq foundhorizontalright
 foundhorizontalright:
+
+    ldr r0, [r6,#64]
+    cmp r0, #1
+    beq skipendvalidhorizontalright
+
     ldr r4, [r6,#24]
     ldr r3, [r6,#8]
     b loopoffoundhorizontalright
@@ -252,10 +353,12 @@ notvalidhorizontalright:
 
 endvalidhorizontalright:
     str r4, [r6,#24]
-    mov r4,#1
-    str r4, [r6,#32]
+    
     ldr r4, [r6,#8]
     strb r8, [r9,r4]
+skipendvalidhorizontalright:
+    mov r4,#1
+    str r4, [r6,#32]
     b endhorizontalright
 
 horizontalleft:
@@ -294,6 +397,10 @@ loophorizontalleft:
     cmp r0, r8
     beq foundhorizontalleft
 foundhorizontalleft:
+    ldr r0, [r6,#64]
+    cmp r0, #1
+    beq skipendvalidhorizontalleft
+
     ldr r4, [r6,#24]
     ldr r3, [r6,#8]
     b loopoffoundhorizontalleft
@@ -309,10 +416,12 @@ notvalidhorizontalleft:
     b endhorizontalleft
 endvalidhorizontalleft:
     str r4, [r6,#24]
-    mov r4, #1
-    str r4, [r6, #36]
+    
     ldr r4, [r6,#8]
     strb r8, [r9,r4]
+skipendvalidhorizontalleft:
+    mov r4, #1
+    str r4, [r6, #36]
     b endhorizontalleft    
 
 verticalup:
@@ -353,6 +462,10 @@ loopverticalup:
     cmp r0, r8
     beq foundverticalup
 foundverticalup:
+    ldr r0, [r6,#64]
+    cmp r0, #1
+    beq skipendvalidverticalup
+
     ldr r4, [r6,#24]
     ldr r3, [r6,#8]
     b loopoffoundverticalup
@@ -368,10 +481,12 @@ notvalidverticalup:
     b endverticalup
 endvalidverticalup:
     str r4, [r6, #24]
-    mov r4,#1
-    str r4, [r6,#40]
+    
     ldr r4, [r6,#8]
     strb r8, [r9,r4]
+skipendvalidverticalup:
+    mov r4,#1
+    str r4, [r6,#40]
     b endverticalup
 
 verticaldown:
@@ -416,6 +531,10 @@ foundverticaldown:
     ldr r3, [r6,#8]
     b loopoffoundverticaldown
 loopoffoundverticaldown:
+    ldr r0, [r6,#64]
+    cmp r0, #1
+    beq skipendvalidverticaldown
+
     sub r4, r4, #8
     cmp r3, r4
     beq endvalidverticaldown
@@ -427,10 +546,12 @@ notvalidverticaldown:
     b endverticaldown
 endvalidverticaldown:
     str r4, [r6, #24]
-    mov r4,#1
-    str r4, [r6,#44]
+    
     ldr r4, [r6,#8]
     strb r8, [r9,r4]
+skipendvalidverticaldown:
+    mov r4,#1
+    str r4, [r6,#44]
     b endverticaldown
 
 forwardup:
@@ -483,6 +604,9 @@ loopforwardup:
     cmp r0, r8
     beq foundforwardup
 foundforwardup:
+    ldr r0, [r6,#64]
+    cmp r0, #1
+    beq skipendvalidfoundforwardup
     ldr r4, [r6,#24]
     ldr r3, [r6,#8]
     b loopoffoundforwardup
@@ -497,10 +621,12 @@ notvalidforwardup:
     str r4, [r6,#48]
     b endforwardup
 endvalidforwardup:
-    mov r4, #1
-    str r4, [r6,#48]
+    
     ldr r4, [r6,#8]
     strb r8, [r9,r4]
+skipendvalidfoundforwardup:
+    mov r4, #1
+    str r4, [r6,#48]
     b endforwardup
 
 forwarddown:
@@ -553,6 +679,9 @@ loopforwarddown:
     cmp r0, r8
     beq foundforwarddown
 foundforwarddown:
+    ldr r0, [r6,#64]
+    cmp r0, #1
+    beq skipendvalidforwarddown
     ldr r4, [r6,#24]
     ldr r3, [r6,#8]
     b loopoffoundforwarddown
@@ -567,10 +696,12 @@ notvalidforwarddown:
     str r4, [r6,#52]
     b endforwarddown
 endvalidforwarddown:
-    mov r4, #1
-    str r4, [r6,#52]
+    
     ldr r4, [r6,#8]
     strb r8, [r9,r4]
+skipendvalidforwarddown:
+    mov r4, #1
+    str r4, [r6,#52]
     b endforwarddown
 
 backup:
@@ -621,6 +752,9 @@ loopbackup:
     cmp r0, r8
     beq foundbackup
 foundbackup:
+    ldr r0, [r6,#64]
+    cmp r0, #1
+    beq skipendvalidfoundbackup
     ldr r4, [r6,#24]
     ldr r3, [r6,#8]
     b loopoffoundbackup
@@ -635,10 +769,12 @@ notvalidbackup:
     str r4, [r6,#56]
     b endbackup
 endvalidbackup:
-    mov r4, #1
-    str r4, [r6,#56]
+    
     ldr r4, [r6,#8]
     strb r8, [r9,r4]
+skipendvalidfoundbackup:
+    mov r4, #1
+    str r4, [r6,#56]
     b endbackup
 
 backdown:
@@ -689,6 +825,9 @@ loopbackdown:
     cmp r0, r8
     beq foundbackdown
 foundbackdown:
+    ldr r0, [r6,#64]
+    cmp r0, #1
+    beq skipendvalidfoundbackdown
     ldr r4, [r6,#24]
     ldr r3, [r6,#8]
     b loopoffoundbackdown
@@ -703,10 +842,12 @@ notvalidbackdown:
     str r4, [r6,#60]
     b endbackdown
 endvalidbackdown:
-    mov r4, #1
-    str r4, [r6,#60]
+    
     ldr r4, [r6,#8]
     strb r8, [r9,r4]
+skipendvalidfoundbackdown:
+    mov r4, #1
+    str r4, [r6,#60]
     b endbackdown
 
 invalidmove:
@@ -848,7 +989,7 @@ totalexit:
     .data
     Array: .space 64
     Score: .space 8
-    IndexArray: .space 64
+    IndexArray: .space 68
     Message: .asciz "reached here\n"
     ScoreString1: .asciz "score of player 1 is: "
     ScoreString2: .asciz "score of player 2 is: "
